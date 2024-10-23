@@ -1,6 +1,5 @@
 package com.spec.annotation.processor;
 
-import java.lang.annotation.ElementType;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -12,14 +11,29 @@ import javax.lang.model.element.TypeElement;
 
 import com.spec.annotation.GenGetter;
 
+/*
+* This Class will process the custom annotation during compile time.
+* 
+* AbstractProcessor helps in processing annotation during compile time
+* 
+* @SupportedAnnotationTypes defines which annotation is supported by the Abstract processor
+*/
 @SupportedAnnotationTypes({
         "com.spec.annotation.GenGetter"
 })
 public class SpecAnnotationProcessor extends AbstractProcessor {
 
+    /*
+     * The following method is called during compile time by the java compiler.
+     * 
+     * Set<? extends TypeElement> is the set of annotations
+     * 
+     * RoundEnvironment contains the elements annotated
+     */
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
 
+        // generate getter for elements annotated with @Getter annotation
         for (Element element : roundEnv.getElementsAnnotatedWith(GenGetter.class)) {
             generateGetter(element);
         }
@@ -28,6 +42,9 @@ public class SpecAnnotationProcessor extends AbstractProcessor {
 
     }
 
+    /*
+     * Common method for generating getters for Class or Fields
+     */
     private void generateGetter(Element element) {
         if (element.getKind() == ElementKind.CLASS) {
             generateGetterForAllField(element);
@@ -36,6 +53,9 @@ public class SpecAnnotationProcessor extends AbstractProcessor {
         }
     }
 
+    /*
+     * Generate getter for class level @Getter annotation
+     */
     private void generateGetterForAllField(Element element) {
         for (Element enclosed : element.getEnclosedElements()) {
             if (enclosed.getKind() == ElementKind.FIELD) {
@@ -44,6 +64,9 @@ public class SpecAnnotationProcessor extends AbstractProcessor {
         }
     }
 
+    /*
+     * Generate getter for method level @Getter annotation
+     */
     private void generateGetterForField(Element element) {
         if (element.getKind() != ElementKind.FIELD) {
             return;
