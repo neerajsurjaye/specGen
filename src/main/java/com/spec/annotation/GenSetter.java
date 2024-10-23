@@ -1,5 +1,5 @@
 package com.spec.annotation;
 
-public @interface  GenSetter {
-    
+public @interface GenSetter {
+
 }
